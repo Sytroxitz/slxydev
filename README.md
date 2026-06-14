@@ -1,6 +1,6 @@
-# slxy.dev
+# **$lxy Txz** — slxy.dev
 
-Personal developer website of **$lxy Txz** — a modern, responsive, single-page
+My Personal developer website — a modern, responsive, single-page
 portfolio built with React, TypeScript, Vite and Framer Motion.
 
 The colour palette is a dark `#131313` base with a `#cc2b5e → #753a88` accent
