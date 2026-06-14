@@ -3,7 +3,7 @@ name: Build & Deploy
 on:
   push:
     branches: [main]
-  workflow_dispatch: {} # manuelles Auslösen im Actions-Tab
+  workflow_dispatch: {} # manual trigger from the Actions tab
 
 env:
   REGISTRY: ghcr.io
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # Push zu GHCR
+      packages: write # push to GHCR
 
     steps:
       - name: Checkout
@@ -48,10 +48,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-  redeploy:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Portainer Redeploy
-        run: curl -fsSL -X POST "${{ secrets.PORTAINER_WEBHOOK_URL }}"
+      # Deployment is pull-based via Watchtower on the VM –
+      # GitHub doesn't need to trigger anything.
