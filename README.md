@@ -37,35 +37,45 @@ npm run preview  # preview the production build
 ## Deployment
 
 Every push/merge to `main` is built into a Docker image and shipped to a
-self-hosted Linux VM automatically:
+self-hosted Linux VM automatically — fully pull-based, no inbound webhook
+required:
 
 ```
 merge → main  →  GitHub Actions builds image  →  push to GHCR (private)
-        →  Portainer webhook  →  re-pull & restart container  →  live
+        →  Watchtower on the VM polls GHCR (~60s)  →  pulls & restarts container  →  live
 ```
 
 The pipeline is defined in `.github/workflows/deploy.yml`. It builds a
 multi-stage image (Node builds, Nginx serves `/dist`) and pushes it to the
-GitHub Container Registry as `ghcr.io/<owner>/slxydev:latest`.
+GitHub Container Registry as `ghcr.io/<owner>/slxydev:latest`. On the VM,
+[Watchtower](https://containrrr.dev/watchtower/) watches that tag and
+redeploys the container whenever a new image digest appears — typically the
+site is live ~2–4 minutes after a merge.
 
 | File | Role |
 | --- | --- |
 | `Dockerfile` | multi-stage build → tiny Nginx runtime image |
 | `nginx.conf` | SPA-routing fallback + asset caching |
 | `.dockerignore` | keeps `node_modules`, secrets and notes out of the image |
-| `.github/workflows/deploy.yml` | the CI/CD pipeline |
-| `docker-compose.portainer.yml` | the Portainer stack (pasted into Portainer, not used by CI) |
+| `.github/workflows/deploy.yml` | the CI/CD pipeline (build + push only) |
+| `docker-compose.portainer.yml` | the Portainer stack: the site + a Watchtower service |
 
-### One-time setup
+### One-time setup (on the VM / in Portainer)
 
-1. **GHCR access** — in Portainer, add a custom registry (`ghcr.io`) with a
-   GitHub PAT scoped to `read:packages`, so it can pull the private image.
+1. **GHCR login** — so Docker can pull the private image and Watchtower can
+   read updates:
+   ```bash
+   echo "<PAT-with-read:packages>" | docker login ghcr.io -u <owner> --password-stdin
+   ```
+   This writes the credentials to `/root/.docker/config.json`, which the
+   Watchtower service mounts.
 2. **Stack** — paste `docker-compose.portainer.yml` into a new Portainer stack
-   (replace the owner in the image name) and deploy.
-3. **Webhook** — enable the stack's *re-pull & redeploy* webhook in Portainer,
-   then add its URL as the GitHub Actions secret `PORTAINER_WEBHOOK_URL`.
+   (replace the owner in the image name) and deploy. You'll see two containers:
+   `slxy-dev` and `watchtower`.
 
-From then on the site redeploys itself on every merge to `main`.
+From then on the site redeploys itself on every merge to `main`. The
+Portainer *re-pull webhook* is a Business-edition feature, so the Community
+edition uses Watchtower instead — no public exposure of the server needed.
 
 ## Editing content
 

@@ -1,0 +1,28 @@
+# Paste into Portainer under: Stacks -> Add stack -> Web editor
+services:
+  slxy-dev:
+    image: ghcr.io/sytroxitz/slxydev:latest
+    container_name: slxy-dev
+    restart: unless-stopped
+    ports:
+      - "8080:80" # left = port on the VM, right = port in the container
+    labels:
+      # Watchtower only updates containers carrying this label
+      - "com.centurylinklabs.watchtower.enable=true"
+    # Optional: behind a reverse proxy (Traefik / Nginx Proxy Manager)
+    # use labels/networks instead of publishing ports.
+
+  # Polls GHCR and pulls/restarts slxy-dev automatically on a new :latest.
+  # Replaces the (Business-only) Portainer webhook.
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: watchtower
+    restart: unless-stopped
+    environment:
+      - WATCHTOWER_CLEANUP=true        # remove old images after updating
+      - WATCHTOWER_LABEL_ENABLE=true   # only watch labelled containers
+      - WATCHTOWER_POLL_INTERVAL=60    # check every 60s
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      # GHCR login for private images (see note below)
+      - /root/.docker/config.json:/config.json:ro

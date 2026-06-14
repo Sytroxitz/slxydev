@@ -25,6 +25,3 @@ memory/
 *.pfx
 secrets.json
 credentials.json
-
-# Docker compose
-docker-compose.portainer.yml
