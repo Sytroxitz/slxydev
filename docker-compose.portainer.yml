@@ -1,16 +1,34 @@
 # Paste into Portainer under: Stacks -> Add stack -> Web editor
 services:
+  # Caddy reverse proxy: terminates HTTPS and auto-obtains/renews a free
+  # Let's Encrypt certificate for slxy.dev. Self-signed does NOT work on .dev
+  # (HSTS-preloaded -> browsers require a trusted cert).
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"   # required for the ACME HTTP challenge + HTTP->HTTPS redirect
+      - "443:443" # HTTPS
+    volumes:
+      - /opt/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data     # PERSIST certs here (avoids Let's Encrypt rate limits)
+      - caddy_config:/config
+    networks:
+      - web
+
   slxy-dev:
     image: ghcr.io/sytroxitz/slxydev:latest
     container_name: slxy-dev
     restart: unless-stopped
-    ports:
-      - "8080:80" # left = port on the VM, right = port in the container
+    # No public port anymore — only Caddy talks to it over the internal network.
+    expose:
+      - "80"
     labels:
       # Watchtower only updates containers carrying this label
       - "com.centurylinklabs.watchtower.enable=true"
-    # Optional: behind a reverse proxy (Traefik / Nginx Proxy Manager)
-    # use labels/networks instead of publishing ports.
+    networks:
+      - web
 
   # Polls GHCR and pulls/restarts slxy-dev automatically on a new :latest.
   # Replaces the (Business-only) Portainer webhook.
@@ -27,3 +45,10 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       # GHCR login for private images (see note below)
       - /root/.docker/config.json:/config.json:ro
+
+networks:
+  web:
+
+volumes:
+  caddy_data:
+  caddy_config:

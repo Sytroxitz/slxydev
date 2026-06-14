@@ -1,0 +1,13 @@
+# Deploy to the VM at: /opt/caddy/Caddyfile
+# Caddy automatically obtains & renews a free Let's Encrypt certificate
+# and redirects HTTP -> HTTPS. No manual cert handling required.
+
+{
+	# Let's Encrypt account email (renewal/expiry notices)
+	email me@slxy.dev
+}
+
+slxy.dev, www.slxy.dev {
+	# Proxy to the static-site container over the internal Docker network.
+	reverse_proxy slxy-dev:80
+}
