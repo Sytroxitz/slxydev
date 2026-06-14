@@ -1,0 +1,86 @@
+.bg {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	overflow: hidden;
+	background: radial-gradient(
+			120% 120% at 50% -10%,
+			#1a1320 0%,
+			var(--bg) 55%
+		),
+		var(--bg);
+}
+
+.bg-blob {
+	position: absolute;
+	border-radius: 50%;
+	filter: blur(110px);
+	opacity: 0.5;
+	will-change: transform;
+}
+
+.blob-pink {
+	width: 46vw;
+	height: 46vw;
+	top: -10vh;
+	left: -8vw;
+	background: radial-gradient(circle, var(--pink), transparent 70%);
+}
+
+.blob-purple {
+	width: 50vw;
+	height: 50vw;
+	top: 30vh;
+	right: -12vw;
+	background: radial-gradient(circle, var(--purple), transparent 70%);
+	opacity: 0.45;
+}
+
+.blob-violet {
+	width: 38vw;
+	height: 38vw;
+	bottom: -12vh;
+	left: 25vw;
+	background: radial-gradient(circle, var(--violet), transparent 70%);
+	opacity: 0.4;
+}
+
+.bg-grid {
+	position: absolute;
+	inset: 0;
+	background-image: radial-gradient(
+		rgba(255, 255, 255, 0.05) 1px,
+		transparent 1px
+	);
+	background-size: 38px 38px;
+	mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, #000 30%, transparent 75%);
+	-webkit-mask-image: radial-gradient(
+		ellipse 80% 60% at 50% 40%,
+		#000 30%,
+		transparent 75%
+	);
+}
+
+.bg-vignette {
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(
+		130% 100% at 50% 50%,
+		transparent 55%,
+		rgba(0, 0, 0, 0.55) 100%
+	);
+}
+
+.bg-noise {
+	position: absolute;
+	inset: 0;
+	opacity: 0.035;
+	mix-blend-mode: overlay;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.bg-blob {
+		animation: none !important;
+	}
+}

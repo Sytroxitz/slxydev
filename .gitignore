@@ -1,0 +1,27 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+*.log
+.history/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# AI assistant context & private notes — never publish
+memory/
+.claude/
+
+# Secrets & local environment
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets.json
+credentials.json

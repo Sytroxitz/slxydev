@@ -1,0 +1,159 @@
+/* ============================================================
+	 slxy.dev — design tokens & global styles
+	 Palette inherited from the original "soon" page:
+	 bg #131313, accent gradient #cc2b5e → #753a88,
+	 wave spectrum #f62691 → #5b00a6
+	 ============================================================ */
+
+:root {
+	/* Surfaces */
+	--bg: #0e0e0e;
+	--bg-soft: #131313;
+	--surface: #18171a;
+	--surface-2: #1f1d22;
+	--border: rgba(255, 255, 255, 0.08);
+	--border-strong: rgba(255, 255, 255, 0.14);
+
+	/* Text */
+	--text: #f5f3f7;
+	--text-muted: #b9b3c2;
+	--text-dim: #7d7689;
+
+	/* Accents (from the original wave + line gradient) */
+	--pink: #f62691;
+	--rose: #cc2b5e;
+	--magenta: #d90c98;
+	--purple: #753a88;
+	--violet: #5b00a6;
+
+	--grad: linear-gradient(120deg, #f62691 0%, #cc2b5e 45%, #753a88 100%);
+	--grad-soft: linear-gradient(120deg, #cc2b5e, #753a88);
+
+	--glow: 0 0 60px -12px rgba(246, 38, 145, 0.55);
+	--ring: 0 0 0 1px var(--border);
+
+	--font-display: "Space Grotesk", sans-serif;
+	--font-body: "Inter", sans-serif;
+	--font-mono: "JetBrains Mono", monospace;
+
+	--max: 1120px;
+	--nav-h: 72px;
+
+	--ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	scroll-behavior: smooth;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+body {
+	margin: 0;
+	background-color: var(--bg);
+	color: var(--text);
+	font-family: var(--font-body);
+	font-weight: 400;
+	line-height: 1.6;
+	overflow-x: hidden;
+	position: relative;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-family: var(--font-display);
+	font-weight: 600;
+	line-height: 1.1;
+	margin: 0;
+	letter-spacing: -0.02em;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+button {
+	font-family: inherit;
+	cursor: pointer;
+}
+
+::selection {
+	background: rgba(246, 38, 145, 0.3);
+	color: #fff;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+	width: 10px;
+}
+::-webkit-scrollbar-track {
+	background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+	background: linear-gradient(var(--rose), var(--purple));
+	border-radius: 10px;
+	border: 2px solid var(--bg);
+}
+
+/* ---------- layout helpers ---------- */
+.container {
+	width: 100%;
+	max-width: var(--max);
+	margin: 0 auto;
+	padding: 0 clamp(20px, 5vw, 40px);
+}
+
+.section {
+	position: relative;
+	padding: clamp(80px, 12vh, 140px) 0;
+}
+
+.gradient-text {
+	background: var(--grad);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+}
+
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	letter-spacing: 0.04em;
+	color: var(--pink);
+	text-transform: uppercase;
+	margin-bottom: 18px;
+}
+.eyebrow::before {
+	content: "";
+	width: 28px;
+	height: 1px;
+	background: var(--grad-soft);
+}
+
+.section-title {
+	font-size: clamp(2rem, 5vw, 3.2rem);
+}
+
+/* Hide the native cursor only on devices that have a fine pointer (mouse) */
+@media (hover: hover) and (pointer: fine) {
+	body.has-cursor * {
+		cursor: none !important;
+	}
+}

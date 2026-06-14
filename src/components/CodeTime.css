@@ -1,0 +1,65 @@
+.codetime__lead {
+	color: var(--text-muted);
+	font-size: 1.05rem;
+	max-width: 52ch;
+	margin: 18px 0 0;
+}
+
+.codetime__badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-top: 40px;
+}
+
+.codetime__badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	padding: 14px 18px;
+	border-radius: 14px;
+	border: 1px solid var(--border);
+	background: linear-gradient(
+		180deg,
+		rgba(246, 38, 145, 0.06),
+		rgba(255, 255, 255, 0.012)
+	);
+	transition: border-color 0.3s ease, transform 0.3s ease,
+		box-shadow 0.3s ease;
+}
+.codetime__badge:hover {
+	transform: translateY(-4px);
+	border-color: rgba(246, 38, 145, 0.4);
+	box-shadow: 0 12px 30px -16px rgba(246, 38, 145, 0.6);
+}
+.codetime__badge-icon {
+	font-size: 1.2rem;
+	color: var(--pink);
+	flex-shrink: 0;
+}
+.codetime__badge img {
+	display: block;
+	height: 28px;
+	width: auto;
+}
+
+.codetime__credits {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 12px 28px;
+	margin-top: 28px;
+}
+
+.codetime__credit {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-family: var(--font-mono);
+	font-size: 0.8rem;
+	color: var(--text-dim);
+	transition: color 0.3s ease;
+}
+.codetime__credit:hover {
+	color: var(--text);
+}
