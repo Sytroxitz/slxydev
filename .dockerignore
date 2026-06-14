@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+.git
+.github
+.history
+.vscode
+.idea
+memory
+.claude
+*.log
+.env
+.env.*
+!.env.example
+README.md

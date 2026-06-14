@@ -34,6 +34,39 @@ npm run build    # type-check + production build to /dist
 npm run preview  # preview the production build
 ```
 
+## Deployment
+
+Every push/merge to `main` is built into a Docker image and shipped to a
+self-hosted Linux VM automatically:
+
+```
+merge → main  →  GitHub Actions builds image  →  push to GHCR (private)
+        →  Portainer webhook  →  re-pull & restart container  →  live
+```
+
+The pipeline is defined in `.github/workflows/deploy.yml`. It builds a
+multi-stage image (Node builds, Nginx serves `/dist`) and pushes it to the
+GitHub Container Registry as `ghcr.io/<owner>/slxydev:latest`.
+
+| File | Role |
+| --- | --- |
+| `Dockerfile` | multi-stage build → tiny Nginx runtime image |
+| `nginx.conf` | SPA-routing fallback + asset caching |
+| `.dockerignore` | keeps `node_modules`, secrets and notes out of the image |
+| `.github/workflows/deploy.yml` | the CI/CD pipeline |
+| `docker-compose.portainer.yml` | the Portainer stack (pasted into Portainer, not used by CI) |
+
+### One-time setup
+
+1. **GHCR access** — in Portainer, add a custom registry (`ghcr.io`) with a
+   GitHub PAT scoped to `read:packages`, so it can pull the private image.
+2. **Stack** — paste `docker-compose.portainer.yml` into a new Portainer stack
+   (replace the owner in the image name) and deploy.
+3. **Webhook** — enable the stack's *re-pull & redeploy* webhook in Portainer,
+   then add its URL as the GitHub Actions secret `PORTAINER_WEBHOOK_URL`.
+
+From then on the site redeploys itself on every merge to `main`.
+
 ## Editing content
 
 All content is data-driven — no need to touch the components:
