@@ -42,7 +42,8 @@ required:
 
 ```
 merge → main  →  GitHub Actions builds image  →  push to GHCR (private)
-        →  Watchtower on the VM polls GHCR (~60s)  →  pulls & restarts container  →  live
+        →  Watchtower on the VM polls GHCR (~60s)  →  pulls & restarts container
+        →  Caddy serves it over HTTPS at https://slxy.dev  →  live
 ```
 
 The pipeline is defined in `.github/workflows/deploy.yml`. It builds a
@@ -50,7 +51,10 @@ multi-stage image (Node builds, Nginx serves `/dist`) and pushes it to the
 GitHub Container Registry as `ghcr.io/<owner>/slxydev:latest`. On the VM,
 [Watchtower](https://containrrr.dev/watchtower/) watches that tag and
 redeploys the container whenever a new image digest appears — typically the
-site is live ~2–4 minutes after a merge.
+site is live ~2–4 minutes after a merge. A [Caddy](https://caddyserver.com)
+reverse proxy sits in front and terminates TLS with an automatically issued
+and renewed Let's Encrypt certificate (self-signed is a non-starter on `.dev`,
+which is HSTS-preloaded and forces a trusted cert).
 
 | File | Role |
 | --- | --- |
@@ -58,24 +62,30 @@ site is live ~2–4 minutes after a merge.
 | `nginx.conf` | SPA-routing fallback + asset caching |
 | `.dockerignore` | keeps `node_modules`, secrets and notes out of the image |
 | `.github/workflows/deploy.yml` | the CI/CD pipeline (build + push only) |
-| `docker-compose.portainer.yml` | the Portainer stack: the site + a Watchtower service |
+| `docker-compose.portainer.yml` | the Portainer stack: Caddy + the site + Watchtower |
+| `Caddyfile` | Caddy config — auto HTTPS + reverse proxy to the site |
 
 ### One-time setup (on the VM / in Portainer)
 
-1. **GHCR login** — so Docker can pull the private image and Watchtower can
+1. **DNS + ports** — point an `A` record for `slxy.dev` (and `www`) at the
+   server's public IP, and make sure ports **80** and **443** reach the VM
+   (Let's Encrypt validates over port 80; both are needed to serve the site).
+2. **GHCR login** — so Docker can pull the private image and Watchtower can
    read updates:
    ```bash
    echo "<PAT-with-read:packages>" | docker login ghcr.io -u <owner> --password-stdin
    ```
    This writes the credentials to `/root/.docker/config.json`, which the
    Watchtower service mounts.
-2. **Stack** — paste `docker-compose.portainer.yml` into a new Portainer stack
-   (replace the owner in the image name) and deploy. You'll see two containers:
-   `slxy-dev` and `watchtower`.
+3. **Caddyfile** — copy `Caddyfile` to `/opt/caddy/Caddyfile` on the VM
+   (the file must exist before deploy, or the bind mount becomes a directory).
+4. **Stack** — paste `docker-compose.portainer.yml` into a new Portainer stack
+   (replace the owner in the image name) and deploy. You'll see three
+   containers: `caddy`, `slxy-dev` and `watchtower`.
 
-From then on the site redeploys itself on every merge to `main`. The
-Portainer *re-pull webhook* is a Business-edition feature, so the Community
-edition uses Watchtower instead — no public exposure of the server needed.
+From then on the site redeploys itself on every merge to `main`. The Portainer
+*re-pull webhook* is a Business-edition feature, so the Community edition uses
+Watchtower instead — no webhook and no inbound trigger from GitHub required.
 
 ## Editing content
 
