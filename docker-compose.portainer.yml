@@ -22,6 +22,7 @@ services:
       - WATCHTOWER_CLEANUP=true        # remove old images after updating
       - WATCHTOWER_LABEL_ENABLE=true   # only watch labelled containers
       - WATCHTOWER_POLL_INTERVAL=60    # check every 60s
+      - DOCKER_API_VERSION=1.44        # match the (newer) Docker daemon's min API
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       # GHCR login for private images (see note below)
