@@ -10,4 +10,25 @@
 slxy.dev, www.slxy.dev {
 	# Proxy to the static-site container over the internal Docker network.
 	reverse_proxy slxy-dev:80
+
+	# Security headers (set once, here at the TLS edge — clients never see the
+	# upstream nginx response directly).
+	header {
+		# Force HTTPS for 1y incl. subdomains; eligible for the preload list.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		# Don't let browsers MIME-sniff responses away from the declared type.
+		X-Content-Type-Options "nosniff"
+		# Trim the Referer sent to other origins.
+		Referrer-Policy "strict-origin-when-cross-origin"
+		# Disallow framing (clickjacking); mirrored by CSP frame-ancestors.
+		X-Frame-Options "DENY"
+		# Content Security Policy. Origins below match what the site actually
+		# loads: Google Fonts (CSS + font files), GitHub API (fetch), and the
+		# shields.io / wakatime badge images. Vite's prod build uses external
+		# module scripts only, so script-src needs no 'unsafe-inline'.
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://img.shields.io https://wakatime.com; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+		# Drop the upstream "Server: nginx/x.y.z" banner — kills version
+		# disclosure and the bogus version-guessed CVE finding.
+		-Server
+	}
 }
