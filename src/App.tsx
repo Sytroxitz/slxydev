@@ -1,6 +1,7 @@
 import Background from "./components/Background";
 import Cursor from "./components/Cursor";
 import ScrollProgress from "./components/ScrollProgress";
+import ScrollToTop from "./components/ScrollToTop";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
 import About from "./components/About";
@@ -28,6 +29,7 @@ export default function App()
 				{sectionEnabled("contact") && <Contact />}
 			</main>
 			<Footer />
+			<ScrollToTop />
 		</>
 	);
 }
