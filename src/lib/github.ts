@@ -6,6 +6,7 @@ import type { Stat } from "../data/site";
 import { skills as manualSkills } from "../data/skills";
 import {
 	hiddenRepos,
+	isHiddenFromProjects,
 	repoOverrides,
 	skillMeta,
 	ghLanguageToSkill,
@@ -126,7 +127,7 @@ function mapRepo(r: Repo) : Project
 export function buildProjects(repos: Repo[]) : Project[]
 {
 	return repos
-		.filter((r) => !r.fork && !r.archived && !hiddenRepos.has(r.name))
+		.filter((r) => !r.fork && !r.archived && !isHiddenFromProjects(r.name))
 		.map(mapRepo)
 		.sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)));
 }

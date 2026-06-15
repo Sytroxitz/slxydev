@@ -46,11 +46,22 @@ export interface RepoOverride
 	description?: string;
 	tags?: string[];
 	featured?: boolean;
+	/** Set `true` to drop this repo from the Work/projects grid only.
+	 *  The repo still counts toward the Stack section and the stats —
+	 *  use `hiddenRepos` if you want it gone everywhere. */
+	hidden?: boolean;
 }
 
 /** Hand-written presentation for specific repos. Anything omitted
  *  falls back to GitHub's own name / description / language. */
 export const repoOverrides: Record<string, RepoOverride> = {
+	slxydev: {
+		title: "slxy.dev",
+		description:
+			"This very site — my personal portfolio, built with React, TypeScript and Vite. It pulls my projects and tech stack live from the GitHub API and ships via Docker behind a Caddy reverse proxy.",
+		tags: ["TypeScript", "React", "Vite"],
+		featured: true,
+	},
 	hydash: {
 		title: "Hydash",
 		description:
@@ -95,6 +106,18 @@ export const repoOverrides: Record<string, RepoOverride> = {
 		description:
 			"A small clicker game built in Python with the Kivy framework — cross-platform UI and game-loop fundamentals.",
 		tags: ["Python", "Kivy", "Games"],
+		hidden: true, // not really a "project" per se, more of a learning sandbox
+	},
+	"Tic-Tac-Toe": {
+		title: "Tic-Tac-Toe",
+		hidden: true, // more of a learning exercise than a full project
+	},
+	"CyberLauncher": {
+		title: "CYBER Launcher",
+		description:
+			"A custom Minecraft launcher built in Java, with its own client — manage multiple accounts and launch configurations with ease.",
+		tags: ["Java", "Minecraft", "Launcher"],
+		hidden: true, // launcher of cyber-client, which is the main project repo
 	},
 	teamchat: {
 		title: "TeamChat Plugin",
@@ -103,6 +126,15 @@ export const repoOverrides: Record<string, RepoOverride> = {
 		tags: ["Java", "Spigot", "Plugin"],
 	},
 };
+
+/** True if a repo should be left out of the Work/projects grid — either
+ *  hidden everywhere via `hiddenRepos` or flagged `hidden: true` in
+ *  `repoOverrides`. Stack & stats use `hiddenRepos` alone, so a repo
+ *  flagged only with `hidden` still shows up there. */
+export function isHiddenFromProjects(name: string) : boolean
+{
+	return hiddenRepos.has(name) || repoOverrides[name]?.hidden === true;
+}
 
 /** Icon + brand colour for every skill we know how to render. */
 export const skillMeta: Record<string, { icon: IconType; color: string }> = {
