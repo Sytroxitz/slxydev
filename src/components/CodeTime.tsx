@@ -12,7 +12,10 @@ import "./CodeTime.css";
  * so a broken period never shows.
  */
 
-const BRAND = "f62691";
+// Darker than the brand pink (--pink #f62691): shields renders white text on
+// the value segment, and the bright pink left it hard to read. This deeper
+// magenta keeps it on-brand while giving the white text real contrast.
+const BRAND = "c0156f";
 const LABEL_BG = "18171a";
 
 function badgeSrc(uid: string, minutes: number, style: string, label: string)
