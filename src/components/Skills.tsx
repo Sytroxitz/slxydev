@@ -40,7 +40,9 @@ export default function Skills()
 									{ "--skill-color": s.color } as React.CSSProperties
 								}
 							>
-								<s.icon className="skill__icon" />
+								{/* Decorative: the skill name is shown as text alongside,
+								    so hide the icon from assistive tech (WCAG 1.1.1). */}
+								<s.icon className="skill__icon" aria-hidden focusable="false" />
 								<span className="skill__name">{s.name}</span>
 								{s.primary && <span className="skill__core">core</span>}
 								{s.focus && <span className="skill__focus">learning</span>}

@@ -79,7 +79,7 @@ export default function CodeTime()
 					<div className="codetime__badges">
 						{visible.map((b) => (
 							<div className="codetime__badge" key={b.label}>
-								<FiActivity className="codetime__badge-icon" />
+								<FiActivity className="codetime__badge-icon" aria-hidden focusable="false" />
 								<img
 									src={badgeSrc(uid, b.minutes, style, b.label)}
 									alt={`CodeTime — ${b.label}`}
@@ -90,7 +90,7 @@ export default function CodeTime()
 						))}
 						{wakaVisible && (
 							<div className="codetime__badge" key="__waka">
-								<FiActivity className="codetime__badge-icon" />
+								<FiActivity className="codetime__badge-icon" aria-hidden focusable="false" />
 								<img
 									src={wakaSrc(waka.uuid, style, waka.label)}
 									alt={`WakaTime — ${waka.label}`}
@@ -110,7 +110,7 @@ export default function CodeTime()
 						className="codetime__credit"
 						data-hover
 					>
-						Powered by CodeTime <FiArrowUpRight />
+						Powered by CodeTime <FiArrowUpRight aria-hidden focusable="false" />
 					</a>
 					{wakaVisible && (
 						<a
@@ -120,7 +120,7 @@ export default function CodeTime()
 							className="codetime__credit"
 							data-hover
 						>
-							Powered by WakaTime <FiArrowUpRight />
+							Powered by WakaTime <FiArrowUpRight aria-hidden focusable="false" />
 						</a>
 					)}
 				</Reveal>
