@@ -61,10 +61,12 @@
 	transform-origin: left;
 	transition: transform 0.3s var(--ease);
 }
-.nav__link:hover {
+.nav__link:hover,
+.nav__link--active {
 	color: var(--text);
 }
-.nav__link:hover::after {
+.nav__link:hover::after,
+.nav__link--active::after {
 	transform: scaleX(1);
 }
 
@@ -111,6 +113,9 @@
 	border-top: 1px solid var(--border);
 	color: var(--text-muted);
 	font-size: 1.05rem;
+}
+.nav__mobile-link--active {
+	color: var(--text);
 }
 .nav__mobile-link--cta {
 	color: var(--pink);

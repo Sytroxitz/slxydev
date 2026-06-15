@@ -20,12 +20,46 @@ export default function Nav()
 {
 	const [scrolled, setScrolled] = useState(false);
 	const [open, setOpen] = useState(false);
+	const [active, setActive] = useState<string>("");
 
 	useEffect(() => {
 		const onScroll = () => setScrolled(window.scrollY > 24);
 		onScroll();
 		window.addEventListener("scroll", onScroll, { passive: true });
 		return () => window.removeEventListener("scroll", onScroll);
+	}, []);
+
+	// Scroll-spy: highlight the link for whichever section sits in the middle
+	// of the viewport and keep the URL hash in sync (replaceState → no jump,
+	// no extra history entries). At the hero we fall back to #top.
+	useEffect(() => {
+		const ids = links.map((l) => l.id);
+		const sections = ids
+			.map((id) => document.getElementById(id))
+			.filter((el): el is HTMLElement => el !== null);
+		if (!sections.length) return;
+
+		const visible = new Set<string>();
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const e of entries) {
+					if (e.isIntersecting) visible.add(e.target.id);
+					else visible.delete(e.target.id);
+				}
+				// topmost section currently crossing the band wins
+				const current = ids.find((id) => visible.has(id)) ?? "";
+				setActive(current);
+
+				const hash = current ? `#${current}` : "#top";
+				if (window.location.hash !== hash) {
+					history.replaceState(null, "", hash);
+				}
+			},
+			{ rootMargin: "-45% 0px -55% 0px" }
+		);
+
+		sections.forEach((s) => observer.observe(s));
+		return () => observer.disconnect();
 	}, []);
 
 	return (
@@ -43,7 +77,14 @@ export default function Nav()
 
 				<nav className="nav__links">
 					{links.map((l) => (
-						<a key={l.href} href={l.href} className="nav__link">
+						<a
+							key={l.href}
+							href={l.href}
+							className={`nav__link ${
+								active === l.id ? "nav__link--active" : ""
+							}`}
+							aria-current={active === l.id ? "true" : undefined}
+						>
 							{l.label}
 						</a>
 					))}
@@ -79,7 +120,10 @@ export default function Nav()
 							<a
 								key={l.href}
 								href={l.href}
-								className="nav__mobile-link"
+								className={`nav__mobile-link ${
+									active === l.id ? "nav__mobile-link--active" : ""
+								}`}
+								aria-current={active === l.id ? "true" : undefined}
 								onClick={() => setOpen(false)}
 							>
 								{l.label}
