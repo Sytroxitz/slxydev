@@ -52,7 +52,7 @@ export default function Hero()
 				</motion.p>
 
 				<motion.h1 className="hero__title" variants={item}>
-					Hi, I'm <span className="gradient-text">{profile.name}</span>.
+					Hi, I'm <span className="gradient-text">{profile.name}</span>
 				</motion.h1>
 
 				<motion.div className="hero__roleline" variants={item}>

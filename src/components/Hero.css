@@ -63,15 +63,14 @@
 	color: var(--text-muted);
 }
 .hero__role-rotator {
-	position: relative;
-	display: inline-block;
-	height: 1.2em;
+	/* inline-grid stacks every role in the same cell, so the box stays in
+	   flow and keeps a real text baseline that lines up with the static "A"
+	   (an absolutely-positioned stack would baseline on its bottom edge). */
+	display: inline-grid;
 	min-width: 12ch;
 }
 .hero__role {
-	position: absolute;
-	left: 0;
-	top: 0;
+	grid-area: 1 / 1;
 	white-space: nowrap;
 	color: var(--text);
 }
